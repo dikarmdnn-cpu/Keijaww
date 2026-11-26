@@ -1,0 +1,1238 @@
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Seventeen Birthday Story</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .font-script { font-family: 'Dancing Script', cursive; }
+        .font-serif-elegant { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Animasi Hati Melayang Naik ke Atas di Background */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(110vh) scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.55;
+            }
+            85% {
+                opacity: 0.55;
+            }
+            100% {
+                transform: translateY(-15vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .floating-heart-bg {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp linear infinite;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Animasi Melayang Halus untuk Elemen Slide */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        @keyframes flameBlink {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.9); opacity: 0.85; }
+        }
+
+        /* Transisi Soft & Memejamkan Mata (Eye Blink / Soft Fade) */
+        .slide-wrapper {
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        filter 0.35s ease;
+            transform-origin: center center;
+        }
+        .slide-blink-out {
+            opacity: 0;
+            transform: scaleY(0.03) scaleX(0.96);
+            filter: blur(5px);
+        }
+        .slide-blink-in {
+            opacity: 1;
+            transform: scaleY(1) scaleX(1);
+            filter: blur(0px);
+        }
+
+        /* Efek Kelopak Mata Memejam Lembut di Layar */
+        .eyelid-top, .eyelid-bottom {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 50vh;
+            background: linear-gradient(to bottom, rgba(253, 242, 248, 0.92), rgba(251, 207, 232, 0.96));
+            backdrop-filter: blur(8px);
+            z-index: 40;
+            pointer-events: none;
+            transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .eyelid-top {
+            top: 0;
+            transform: translateY(-100%);
+            border-bottom: 2px solid rgba(244, 114, 182, 0.25);
+        }
+        .eyelid-bottom {
+            bottom: 0;
+            background: linear-gradient(to top, rgba(253, 242, 248, 0.92), rgba(251, 207, 232, 0.96));
+            transform: translateY(100%);
+            border-top: 2px solid rgba(244, 114, 182, 0.25);
+        }
+        .eyelids-closed .eyelid-top {
+            transform: translateY(0%);
+        }
+        .eyelids-closed .eyelid-bottom {
+            transform: translateY(0%);
+        }
+
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-shake { animation: shake 0.4s ease-in-out; }
+        .flame { animation: flameBlink 0.35s ease-in-out infinite alternate; }
+        .polaroid {
+            background: white;
+            padding: 12px 12px 28px 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .polaroid:hover {
+            transform: scale(1.02) rotate(0deg) !important;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-rose-50 to-purple-100 min-h-screen flex flex-col justify-between font-sans relative overflow-x-hidden">
+    <!-- Overlay Kelopak Mata untuk Transisi Memejamkan Mata -->
+    <div id="eyelid-overlay" class="pointer-events-none">
+        <div class="eyelid-top"></div>
+        <div class="eyelid-bottom"></div>
+    </div>
+
+    <!-- Elemen Audio Tersembunyi untuk YouTube Backsound -->
+    <div class="hidden">
+        <iframe id="youtube-player" src="" allow="autoplay" width="100" height="100"></iframe>
+    </div>
+
+    <!-- Halaman Kunci PIN Rahasia (PIN: 261109) -->
+    <div id="pin-lock-screen" class="fixed inset-0 bg-pink-950/40 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all duration-500">
+        <div id="pin-card" class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-pink-200 p-6 sm:p-8 max-w-sm w-full text-center flex flex-col items-center">
+            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-3xl mb-3 shadow-inner">
+                🔐
+            </div>
+            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-1">Area Rahasia</h2>
+            <p class="text-xs text-gray-500 mb-5">Masukkan 6 digit PIN tanggal spesial kita untuk membuka ucapan Sweet 17 ✨</p>
+
+            <!-- Indikator Dot PIN -->
+            <div class="flex justify-center gap-3 mb-6">
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+                <div class="pin-dot w-4 h-4 rounded-full border-2 border-pink-400 bg-transparent transition-all duration-200"></div>
+            </div>
+
+            <!-- Keypad Angka -->
+            <div class="grid grid-cols-3 gap-3 w-full mb-3">
+                <button type="button" onclick="enterPinDigit(1)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">1</button>
+                <button type="button" onclick="enterPinDigit(2)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">2</button>
+                <button type="button" onclick="enterPinDigit(3)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">3</button>
+                <button type="button" onclick="enterPinDigit(4)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">4</button>
+                <button type="button" onclick="enterPinDigit(5)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">5</button>
+                <button type="button" onclick="enterPinDigit(6)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">6</button>
+                <button type="button" onclick="enterPinDigit(7)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">7</button>
+                <button type="button" onclick="enterPinDigit(8)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">8</button>
+                <button type="button" onclick="enterPinDigit(9)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">9</button>
+                <button type="button" onclick="clearPin()" class="py-3 bg-red-50 hover:bg-red-100 active:bg-red-200 rounded-2xl text-xs font-bold text-red-600 transition shadow-sm">Reset</button>
+                <button type="button" onclick="enterPinDigit(0)" class="py-3.5 bg-pink-50 hover:bg-pink-100 active:bg-pink-200 rounded-2xl font-bold text-lg text-pink-700 transition shadow-sm">0</button>
+                <button type="button" onclick="deletePinDigit()" class="py-3 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-2xl text-xs font-bold text-gray-700 transition shadow-sm">⌫</button>
+            </div>
+
+            <p id="pin-error-msg" class="text-xs text-rose-500 font-medium h-4 mt-1"></p>
+        </div>
+    </div>
+
+    <!-- Background Elemen Dekoratif Emoji Hati Melayang-Layang -->
+    <div id="floating-hearts" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- Header Web Ulang Tahun -->
+    <header class="relative z-20 px-4 py-4 max-w-2xl mx-auto w-full flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-500 text-white flex items-center justify-center font-bold shadow-md">17</span>
+            <div>
+                <h1 class="font-serif-elegant font-bold text-gray-800 text-sm sm:text-base">Sweet Seventeen</h1>
+                <p class="text-[11px] text-pink-600 font-medium">Spesial Hari Ini 💖</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" onclick="toggleSlideMenu()" class="bg-white/80 hover:bg-white text-pink-600 font-bold px-3.5 py-2 rounded-2xl shadow-sm border border-pink-100 text-xs flex items-center gap-1.5 transition">
+                <span>📖 Slide <span id="current-slide-num">1</span>/30</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Progress Bar di Atas Konten -->
+    <div class="relative z-20 max-w-2xl mx-auto w-full px-4 mb-2">
+        <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden shadow-inner">
+            <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-rose-500 h-full w-[3.33%] transition-all duration-300 rounded-full"></div>
+        </div>
+    </div>
+
+    <!-- Kontainer Utama Slide (30 Slide) -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-4 my-2">
+        <div id="slide-container" class="slide-wrapper slide-blink-in w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-pink-100 p-6 sm:p-10 min-h-[460px] flex flex-col justify-center items-center text-center relative overflow-hidden">
+            <!-- Konten slide dirender oleh JavaScript -->
+        </div>
+    </main>
+
+    <!-- Footer Navigasi Bawah -->
+    <footer class="relative z-20 px-4 py-4 max-w-2xl mx-auto w-full flex items-center justify-between gap-4">
+        <button type="button" id="prev-btn" onclick="prevSlide()" class="flex-1 bg-white hover:bg-pink-50 text-pink-600 font-bold py-3 px-6 rounded-2xl shadow-md border border-pink-100 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <span>←</span> Sebelumnya
+        </button>
+        <button type="button" id="next-btn" onclick="nextSlide()" class="flex-1 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-pink-500/30 transition disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            Selanjutnya <span>→</span>
+        </button>
+    </footer>
+
+    <!-- Modal Daftar 30 Slide -->
+    <div id="slide-menu-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center pb-3 border-b border-pink-100">
+                <h3 class="font-bold text-lg text-pink-600">Pilih Halaman (1 - 30)</h3>
+                <button type="button" onclick="toggleSlideMenu()" class="text-gray-400 hover:text-gray-600 text-xl font-bold px-2">&times;</button>
+            </div>
+            <div id="slide-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 overflow-y-auto py-4"></div>
+        </div>
+    </div>
+
+    <!-- Kotak Pesan Notifikasi Kustom -->
+    <div id="toast-box" class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-gray-900/90 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-xl z-50 transition-all duration-300 opacity-0 pointer-events-none">
+        Pesan notifikasi
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. STATE & KONFIGURASI APLIKASI
+        // ==========================================
+        const SECRET_PIN = "261109";
+        let enteredPin = "";
+        let isUnlocked = false;
+        let isTransitioning = false;
+
+        let currentSlide = 0; // Index 0 sampai 29 (Total 30 Slide)
+        let gfName = "Sayangku";
+        let bfName = "Cowokku";
+
+        // Daftar File Foto Kenangan Lokal (Tinggal simpan file 1.jpg s/d 7.jpg di folder yang sama)
+        const photoMemories = {
+            photo1: "1.jpg",
+            photo2: "2.jpg",
+            photo3: "3.jpg",
+            photo4: "4.jpg",
+            photo5: "5.jpg",
+            photo6: "6.jpg",
+            puzzlePhoto: "7.jpg"
+        };
+
+        // State Mini Games
+        let quizIndex = 0;
+        let quizScore = 0;
+        let catchScore = 0;
+        let selectedGift = null;
+        let candlesBlown = false;
+
+        // State Mini Game Puzzle Foto (3x3) di Tengah
+        let puzzleOrder = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        let puzzleSelectedTile = null;
+        let puzzleSolved = false;
+        let puzzleMoves = 0;
+
+        // Status Selesai Game per Slide Game (Tombol selanjutnya terkunci jika game belum selesai)
+        let gameCompleted = {
+            5: false,  // Slide 6: Kuis (index 5)
+            9: false,  // Slide 10: Tangkap Hati (index 9)
+            10: false, // Slide 11: Puzzle (index 10)
+            16: false, // Slide 17: Kado Misteri (index 16)
+            28: false  // Slide 29: Tiup Lilin (index 28)
+        };
+
+        // ==========================================
+        // 2. DATA 30 SLIDE LENGKAP
+        // ==========================================
+        function getSlidesData() {
+            return [
+                // SLIDE 1: Pembuka Sweet Seventeen
+                {
+                    title: "Pembuka",
+                    render: () => `
+                        <div class="flex flex-col items-center">
+                            <span class="bg-pink-100 text-pink-600 text-xs font-bold px-4 py-1.5 rounded-full mb-4">✨ Special Edition 30 Slides ✨</span>
+                            <div class="text-5xl mb-4 animate-float">👑🎂💖</div>
+                            <h1 class="font-serif-elegant text-3xl sm:text-5xl font-bold text-gray-800 mb-3">
+                                Happy 17th Birthday, <span class="text-pink-600">${gfName}</span>!
+                            </h1>
+                            <p class="font-script text-2xl sm:text-3xl text-rose-500 mb-4">Welcome to Your Sweet Seventeen</p>
+                            <p class="text-gray-600 text-sm sm:text-base max-w-md leading-relaxed">
+                                Hari ini adalah hari yang paling ditunggu. Dunia resmi menyambut versi terbaikmu di usia 17 tahun. Aku sudah menyiapkan 30 slide perjalanan khusus untukmu!
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 2: Makna Usia 17
+                {
+                    title: "Usia 17",
+                    render: () => `
+                        <div class="flex flex-col items-center">
+                            <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-pink-400 to-purple-400 text-white flex items-center justify-center text-3xl font-bold shadow-lg mb-5">
+                                17
+                            </div>
+                            <h2 class="font-serif-elegant text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Babak Baru Dimulai</h2>
+                            <p class="text-gray-600 text-sm sm:text-base max-w-md leading-relaxed mb-4">
+                                Tujuh belas bukan sekadar angka, tapi awal dari mimpi-mimpi yang lebih besar, langkah yang lebih berani, dan cerita hidup yang makin berwarna.
+                            </p>
+                            <div class="bg-pink-50 border border-pink-100 rounded-2xl p-4 text-xs sm:text-sm text-pink-700 font-medium">
+                                "Semoga di usia ke-17 ini, setiap langkahmu selalu dipenuhi kebahagiaan dan keberuntungan."
+                            </div>
+                        </div>
+                    `
+                },
+                // SLIDE 3: Foto Kenangan 1 (1.jpg)
+                {
+                    title: "Kenangan 1",
+                    render: () => renderPhotoSlide("photo1", "Keija Sayang 💕", "Setiap kali melihat foto ini, aku selalu bersyukur semesta mempertemukan kita.", "-2deg")
+                },
+                // SLIDE 4: Hal yang Aku Kagumi Darimu
+                {
+                    title: "Tentangmu",
+                    render: () => `
+                        <div class="w-full max-w-md">
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-4">3 Hal yang Paling Aku Suka Darimu 🌸</h2>
+                            <div class="space-y-3 text-left">
+                                <div class="bg-pink-50/80 p-3.5 rounded-2xl border border-pink-100 flex items-start gap-3">
+                                    <span class="text-xl">😊</span>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-pink-700">Senyummu yang Menenangkan</h4>
+                                        <p class="text-xs text-gray-600">Secapek apa pun hariku, melihat senyummu selalu bikin semuanya terasa ringan lagi.</p>
+                                    </div>
+                                </div>
+                                <div class="bg-purple-50/80 p-3.5 rounded-2xl border border-purple-100 flex items-start gap-3">
+                                    <span class="text-xl">🌷</span>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-purple-700">Kebaikan Hatimu</h4>
+                                        <p class="text-xs text-gray-600">Cara kamu peduli sama orang-orang di sekitarmu selalu bikin aku bangga punya kamu.</p>
+                                    </div>
+                                </div>
+                                <div class="bg-rose-50/80 p-3.5 rounded-2xl border border-rose-100 flex items-start gap-3">
+                                    <span class="text-xl">✨</span>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-rose-700">Tawa & Keunikanmu</h4>
+                                        <p class="text-xs text-gray-600">Kamu nggak pernah perlu jadi orang lain untuk terlihat luar biasa di mataku.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                // SLIDE 5: Foto Kenangan 2 (2.jpg)
+                {
+                    title: "Kenangan 2",
+                    render: () => renderPhotoSlide("photo2", "Senyum Terindah ✨", "Tetaplah tersenyum manis seperti ini di usia 17 dan seterusnya ya!", "2deg")
+                },
+                // SLIDE 6: MINI GAME 1 - Kuis Cinta Sweet 17
+                {
+                    title: "Game 1: Kuis",
+                    render: () => renderQuizSlide()
+                },
+                // SLIDE 7: Terima Kasih Sudah Hadir
+                {
+                    title: "Terima Kasih",
+                    render: () => `
+                        <div class="flex flex-col items-center">
+                            <div class="text-4xl mb-4">💌</div>
+                            <h2 class="font-serif-elegant text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Terima Kasih, ${gfName}</h2>
+                            <p class="text-gray-600 text-sm sm:text-base max-w-md leading-relaxed">
+                                Terima kasih sudah menjadi bagian paling indah di hariku. Terima kasih untuk setiap sabar, perhatian, dan tawa yang kita bagi bersama sampai hari ini.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 8: Foto Kenangan 3 (3.jpg)
+                {
+                    title: "Kenangan 3",
+                    render: () => renderPhotoSlide("photo3", "Petualangan Kita 🛵", "Masih banyak tempat seru dan kuliner enak yang harus kita datangi berdua!", "-1.5deg")
+                },
+                // SLIDE 9: Perjalanan Waktu Kita
+                {
+                    title: "Waktu Kita",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">⏳💖</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Setiap Detik Berharga</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                                Waktu berjalan begitu cepat saat aku bersamamu. Rasanya baru kemarin kita ngobrol canggung, sekarang sudah sejauh ini kita melangkah.
+                            </p>
+                            <div class="bg-pink-50 p-3 rounded-2xl border border-pink-200 text-xs font-semibold text-pink-700">
+                                "Teruslah menggenggam tanganku ya, sayang."
+                            </div>
+                        </div>
+                    `
+                },
+                // SLIDE 10: MINI GAME 2 - Tangkap 17 Hati Cinta
+                {
+                    title: "Game 2: Tangkap Hati",
+                    render: () => renderCatchHeartsSlide()
+                },
+                // SLIDE 11: MINI GAME 3 - Menyusun Puzzle Foto (7.jpg)
+                {
+                    title: "Game 3: Puzzle Foto",
+                    render: () => renderPhotoPuzzleSlide()
+                },
+                // SLIDE 12: Foto Kenangan 4 (4.jpg)
+                {
+                    title: "Kenangan 4",
+                    render: () => renderPhotoSlide("photo4", "Momen Lucuw 😂", "Sama kamu, hal receh aja bisa jadi kenangan paling seru buat diingat.", "2deg")
+                },
+                // SLIDE 13: 17 Harapan Singkat
+                {
+                    title: "17 Harapan",
+                    render: () => `
+                        <div class="w-full max-w-md">
+                            <h2 class="font-serif-elegant text-xl sm:text-2xl font-bold text-gray-800 mb-3">17 Harapan di Usia 17 🌟</h2>
+                            <div class="flex flex-wrap justify-center gap-2 text-xs">
+                                ${["Sehat Selalu", "Makin Bahagia", "Sukses Sekolah", "Makin Sayang Keluarga", "Makin Sayang Aku 😜", "Rezeki Lancar", "Dikelilingi Orang Baik", "Mimpi Tercapai", "Selalu Tersenyum", "Kuat Hadapi Masalah", "Makin Dewasa", "Glow Up Terus", "Tidur Cukup", "Jajan Enak Terus", "Hati Tenang", "Penuh Keberuntungan", "Langgeng Sama Aku ❤️"]
+                                    .map((wish, i) => `<span class="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 text-pink-700 font-semibold px-3 py-1.5 rounded-full">${i + 1}. ${wish}</span>`).join('')}
+                            </div>
+                        </div>
+                    `
+                },
+                // SLIDE 14: Pengingat Saat Lelah
+                {
+                    title: "Pengingat",
+                    render: () => `
+                        <div class="flex flex-col items-center">
+                            <div class="text-4xl mb-4">🫂💖</div>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Kalau Suatu Hari Kamu Capek...</h2>
+                            <p class="text-gray-600 text-sm sm:text-base max-w-md leading-relaxed">
+                                Ingat ya, kamu nggak pernah sendirian. Kapan pun dunia terasa berat, bahuku selalu siap jadi tempatmu bersandar dan bercerita.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 15: Foto Kenangan 5 (5.jpg)
+                {
+                    title: "Kenangan 5",
+                    render: () => renderPhotoSlide("photo5", "Favoritku 🍰", "Nggak pernah bosan ngabisin waktu bareng kamu.", "-2deg")
+                },
+                // SLIDE 16: Alasan Aku Mencintaimu
+                {
+                    title: "Alasan Cintaku",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">💫🌹</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Kenapa Harus Kamu?</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                                Orang sering tanya kenapa aku bisa sebegitu sayangnya sama kamu. Jawabannya sederhana: karena di dekatmu, aku bisa jadi diriku sendiri seutuhnya tanpa rasa takut.
+                            </p>
+                            <span class="text-xs font-bold text-purple-600 bg-purple-50 px-4 py-2 rounded-full">You are my safe place 🏡</span>
+                        </div>
+                    `
+                },
+                // SLIDE 17: MINI GAME 4 - Pilih Kotak Hadiah Misteri
+                {
+                    title: "Game 4: Hadiah",
+                    render: () => renderGiftBoxSlide()
+                },
+                // SLIDE 18: Janji Kecilku
+                {
+                    title: "Janji Kecil",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">🤝✨</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Janji Sederhanaku</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                                Aku berjanji untuk terus ada di sampingmu, mendengarkan keluh kesahmu, merayakan setiap keberhasilan kecilmu, dan mencintaimu di hari-hari baik maupun hari-hari berat.
+                            </p>
+                            <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200 text-xs font-bold text-rose-600">
+                                Selamanya untukmu ❤️
+                            </div>
+                        </div>
+                    `
+                },
+                // SLIDE 19: Surat Cinta Singkat
+                {
+                    title: "Surat Untukmu",
+                    render: () => `
+                        <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-5 sm:p-6 max-w-md text-left shadow-inner">
+                            <p class="font-script text-2xl text-pink-600 mb-2">Dear ${gfName},</p>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed mb-3">
+                                Selamat ulang tahun ke-17 ya cantik. Aku bangga banget melihat kamu tumbuh jadi perempuan yang hebat, manis, dan penuh semangat. Semoga kita bisa terus merayakan ulang tahun-ulang tahun berikutnya bersama.
+                            </p>
+                            <p class="text-right font-script text-xl text-rose-600">— Dari ${bfName} ❤️</p>
+                        </div>
+                    `
+                },
+                // SLIDE 20: Foto Kenangan 6 (6.jpg)
+                {
+                    title: "Kenangan 6",
+                    render: () => renderPhotoSlide("photo6", "Selamanya Spesial 💖", "Satu frame penuh cinta untuk gadis Sweet Seventeen hari ini!", "1.5deg")
+                },
+                // SLIDE 21: Impian Masa Depan Kita
+                {
+                    title: "Masa Depan",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">🚀🌙</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Mimpi-Mimpi Kita</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                                Masih banyak hal hebat di luar sana yang belum kita capai. Di usia 17 ini, kejarlah semua mimpimu setinggi langit, dan aku akan selalu berdiri di garis depan mendukungmu!
+                            </p>
+                            <span class="text-xs font-bold text-pink-600 bg-pink-50 px-4 py-2 rounded-full">Kita pasti bisa capai semuanya! ✨</span>
+                        </div>
+                    `
+                },
+                // SLIDE 22: Apresiasi Ketulusanmu
+                {
+                    title: "Ketulusanmu",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">💎🌸</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Hati yang Tulus</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Yang paling aku kagumi dari kamu adalah ketulusan hatimu dalam memperlakukan orang lain. Kamu adalah definisi keindahan sesungguhnya dari dalam maupun luar.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 23: Saat Kita Berbeda Pendapat
+                {
+                    title: "Belajar Bersama",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">🧩💕</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Tumbuh Bersama</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Hubungan kita bukan berarti tanpa perbedaan. Tapi setiap kali ada masalah, kita selalu bisa menyelesaikannya dengan baik. Terima kasih karena selalu mau mengalah dan mengerti.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 24: Sisi Lucu & Gemasmu
+                {
+                    title: "Sisi Gemasmu",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">🥺💖</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Gemesin Banget!</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Kadang kalau kamu lagi ngambek atau pas lagi fokus cerita hal-hal random, kamu tuh keliatan gemesin banget sampai aku pengen cubit pipinya! Hehe.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 25: Doa Orang Tersayang
+                {
+                    title: "Doa Orang Sekitar",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">👨‍👩‍👧‍👦✨</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Kebanggaan Keluarga</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Bukan cuma aku yang bangga sama kamu, orang tua dan semua orang di sekitarmu pasti sangat bersyukur punya anak sebaik dan sehebat kamu.
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 26: Kata-Kata Semangat Sekolah
+                {
+                    title: "Semangat Belajar",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">📚🎓</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Fokus & Semangat!</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
+                                Tahun ini tugas dan pelajaran mungkin makin banyak dan menantang. Tapi aku yakin seratus persen, kamu pasti bisa melewatinya dengan nilai-nilai terbaik!
+                            </p>
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-4 py-2 rounded-full">Kamu pasti bisa! 🥇</span>
+                        </div>
+                    `
+                },
+                // SLIDE 27: Pelukan Virtual Spesial
+                {
+                    title: "Pelukan Hangat",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">🤗💫</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Peluk Jauh Buat Kamu</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Anggap slide ini sebagai pelukan hangat paling erat dariku untuk merayakan hari ulang tahunmu yang ke-17 ini. Kamu hebat banget udah bertahan sampai sejauh ini!
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 28: Menuju Puncak Perayaan
+                {
+                    title: "Menuju Puncak",
+                    render: () => `
+                        <div class="flex flex-col items-center w-full max-w-md">
+                            <span class="text-3xl mb-2">✨🎂</span>
+                            <h2 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-3">Sebentar Lagi...</h2>
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                Kita sudah sampai di penghujung slide cerita ini. Satu slide lagi sebelum kita tiup lilin bersama dan merayakan ulang tahunmu secara meriah!
+                            </p>
+                        </div>
+                    `
+                },
+                // SLIDE 29: MINI GAME 5 - Tiup Lilin Kue Ulang Tahun Super Unik
+                {
+                    title: "Game 5: Tiup Lilin",
+                    render: () => renderCakeSlide()
+                },
+                // SLIDE 30: Penutup & Perayaan Akhir
+                {
+                    title: "Penutup",
+                    render: () => `
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl mb-3 animate-bounce">🎉🥳💖</div>
+                            <h2 class="font-serif-elegant text-2xl sm:text-4xl font-bold text-pink-600 mb-2">
+                                Happy Sweet 17, ${gfName}!
+                            </h2>
+                            <p class="text-gray-600 text-sm sm:text-base max-w-md leading-relaxed mb-5">
+                                Nikmati hari spesialmu sepenuhnya hari ini! I love you to the moon and back! 🌙✨
+                            </p>
+                            <button type="button" onclick="triggerConfetti()" class="bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition">
+                                🎊 Rayakan Lagi!
+                            </button>
+                        </div>
+                    `
+                }
+            ];
+        }
+
+        // ==========================================
+        // 3. NAVIGASI SLIDE DENGAN TRANSISI SOFT & MEMEJAMKAN MATA
+        // ==========================================
+        function renderSlideContent() {
+            const slides = getSlidesData();
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+
+            const container = document.getElementById('slide-container');
+            if (container) {
+                container.innerHTML = slides[currentSlide].render();
+            }
+
+            const numEl = document.getElementById('current-slide-num');
+            if (numEl) numEl.textContent = (currentSlide + 1);
+
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                const percent = ((currentSlide + 1) / slides.length) * 100;
+                progressBar.style.width = percent + '%';
+            }
+
+            const prevBtn = document.getElementById('prev-btn');
+            if (prevBtn) {
+                prevBtn.disabled = (currentSlide === 0);
+            }
+
+            // Atur status tombol Selanjutnya berdasarkan mini-game
+            const nextBtn = document.getElementById('next-btn');
+            if (nextBtn) {
+                let isGameSlide = [5, 9, 10, 16, 28].includes(currentSlide);
+                if (currentSlide === slides.length - 1) {
+                    nextBtn.disabled = true;
+                    nextBtn.textContent = "Selesai 💖";
+                } else {
+                    nextBtn.innerHTML = `Selanjutnya <span>→</span>`;
+                    if (isGameSlide && !gameCompleted[currentSlide]) {
+                        nextBtn.disabled = true;
+                    } else {
+                        nextBtn.disabled = false;
+                    }
+                }
+            }
+        }
+
+        function transitionToSlide(newIndex) {
+            const slides = getSlidesData();
+            if (newIndex < 0 || newIndex >= slides.length) return;
+            if (newIndex === currentSlide || isTransitioning) return;
+
+            isTransitioning = true;
+            const container = document.getElementById('slide-container');
+            const eyelids = document.getElementById('eyelid-overlay');
+
+            // Tahap 1: Memejamkan mata lembut & menyempitkan slide
+            if (container) {
+                container.classList.remove('slide-blink-in');
+                container.classList.add('slide-blink-out');
+            }
+            if (eyelids) {
+                eyelids.classList.add('eyelids-closed');
+            }
+
+            // Tahap 2: Ganti konten saat mata terpejam, lalu buka perlahan
+            setTimeout(() => {
+                currentSlide = newIndex;
+                renderSlideContent();
+
+                if (eyelids) {
+                    eyelids.classList.remove('eyelids-closed');
+                }
+                if (container) {
+                    container.classList.remove('slide-blink-out');
+                    container.classList.add('slide-blink-in');
+                }
+
+                setTimeout(() => {
+                    isTransitioning = false;
+                }, 360);
+            }, 340);
+        }
+
+        function nextSlide() {
+            const slides = getSlidesData();
+            if (currentSlide < slides.length - 1) {
+                transitionToSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                transitionToSlide(currentSlide - 1);
+            }
+        }
+
+        function toggleSlideMenu() {
+            const modal = document.getElementById('slide-menu-modal');
+            if (!modal) return;
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                const grid = document.getElementById('slide-grid');
+                if (grid) {
+                    const slides = getSlidesData();
+                    grid.innerHTML = slides.map((s, idx) => `
+                        <button type="button" onclick="goToSlide(${idx})" class="p-2.5 rounded-xl border text-xs font-bold transition ${currentSlide === idx ? 'bg-pink-500 text-white border-pink-500 shadow' : 'bg-pink-50 hover:bg-pink-100 text-pink-700 border-pink-200'}">
+                            ${idx + 1}. ${s.title}
+                        </button>
+                    `).join('');
+                }
+            }
+        }
+
+        function goToSlide(idx) {
+            toggleSlideMenu();
+            transitionToSlide(idx);
+        }
+
+        // ==========================================
+        // 4. HELPER RENDER FOTO (TANPA TOMBOL GANTI FOTO) & MINI GAMES
+        // ==========================================
+        function renderPhotoSlide(photoKey, caption, subtext, rotateDeg) {
+            return `
+                <div class="flex flex-col items-center w-full">
+                    <div class="polaroid max-w-[270px] sm:max-w-[300px] w-full mb-4" style="transform: rotate(${rotateDeg});">
+                        <div class="relative w-full h-52 sm:h-60 rounded-lg overflow-hidden bg-pink-50 mb-3">
+                            <img src="${photoMemories[photoKey]}" alt="${caption}" class="w-full h-full object-cover">
+                        </div>
+                        <p class="font-script text-xl text-gray-800">${caption}</p>
+                    </div>
+                    <p class="text-xs sm:text-sm text-gray-600 max-w-sm">${subtext}</p>
+                </div>
+            `;
+        }
+
+        // --- MINI GAME 1: KUIS CINTA SWEET 17 ---
+        const quizQuestions = [
+            {
+                q: "Siapa yang hari ini resmi berumur 17 tahun dan paling cantik sedunia?",
+                options: ["Upin & Ipin", "Kamu dong, kesayanganku! 💖", "Doraemon"],
+                correct: 1
+            },
+            {
+                q: "Apa harapan terbaikku buat kamu di usia Sweet Seventeen ini?",
+                options: ["Selalu bahagia, sehat, & tercapai cita-citanya ✨", "Lupa makan", "Sering begadang"],
+                correct: 0
+            },
+            {
+                q: "Siapa orang yang paling sayang dan selalu dukung kamu?",
+                options: ["Tetangga sebelah", "Aku selamanya ❤️", "Tukang bakso"],
+                correct: 1
+            }
+        ];
+
+        function renderQuizSlide() {
+            if (quizIndex >= quizQuestions.length) {
+                return `
+                    <div class="flex flex-col items-center">
+                        <div class="text-5xl mb-3">🏆💖</div>
+                        <h3 class="font-serif-elegant text-2xl font-bold text-pink-600 mb-2">Kuis Selesai!</h3>
+                        <p class="text-sm text-gray-600 mb-4">Skor kamu: <b>${quizScore} / ${quizQuestions.length}</b>. Kamu memang paling mengerti hati ini! ✨</p>
+                        <button type="button" onclick="resetQuiz()" class="bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold px-4 py-2 rounded-full">Main Lagi</button>
+                    </div>
+                `;
+            }
+            const item = quizQuestions[quizIndex];
+            return `
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full mb-3">🎮 Mini Game 1: Kuis Cinta (${quizIndex + 1}/${quizQuestions.length})</span>
+                    <h3 class="font-bold text-base sm:text-lg text-gray-800 mb-4">${item.q}</h3>
+                    <div class="w-full space-y-2.5">
+                        ${item.options.map((opt, idx) => `
+                            <button type="button" onclick="answerQuiz(${idx})" class="w-full text-left p-3.5 rounded-2xl bg-pink-50 hover:bg-pink-100 border border-pink-200 text-sm font-semibold text-gray-700 transition">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function answerQuiz(idx) {
+            if (idx === quizQuestions[quizIndex].correct) {
+                quizScore++;
+                showToast("Benar banget sayang! 💖");
+                triggerConfetti();
+            } else {
+                showToast("Hehe kurang tepat, tapi tetap sayang kok! 💕");
+            }
+            quizIndex++;
+            if (quizIndex >= quizQuestions.length) {
+                gameCompleted[5] = true;
+            }
+            renderSlideContent();
+        }
+
+        function resetQuiz() {
+            quizIndex = 0;
+            quizScore = 0;
+            gameCompleted[5] = false;
+            renderSlideContent();
+        }
+
+        // --- MINI GAME 2: TANGKAP 17 HATI CINTA ---
+        function renderCatchHeartsSlide() {
+            return `
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <span class="bg-rose-100 text-rose-600 text-xs font-bold px-3 py-1 rounded-full mb-2">🎮 Mini Game 2: Tangkap Hati</span>
+                    <h3 class="font-bold text-lg text-gray-800 mb-1">Kumpulkan 17 Hati Cinta!</h3>
+                    <p class="text-xs text-gray-500 mb-3">Klik/sentuh hati yang muncul di kotak bawah ini</p>
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="bg-pink-500 text-white text-xs font-bold px-4 py-1.5 rounded-full">Skor: <span id="catch-score-display">${catchScore}</span> / 17</span>
+                        <button type="button" onclick="startCatchGame()" class="bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                            ${catchScore >= 17 ? "Main Lagi" : "Mulai / Acak"}
+                        </button>
+                    </div>
+                    <div id="catch-arena" class="relative w-full h-52 bg-gradient-to-b from-pink-50 to-rose-100 rounded-2xl border-2 border-dashed border-pink-300 overflow-hidden flex items-center justify-center">
+                        ${catchScore >= 17
+                            ? `<div class="text-center p-4"><div class="text-4xl mb-1">🎉💖</div><p class="font-bold text-pink-600 text-sm">Yeay! 17 Hati terkumpul! Silakan lanjut ke slide berikutnya.</p></div>`
+                            : `<button type="button" id="target-heart" onclick="catchHeartTap()" style="top: 40%; left: 45%;" class="absolute text-3xl sm:text-4xl transition-all duration-150 hover:scale-125 active:scale-90 cursor-pointer">💖</button>`
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function startCatchGame() {
+            catchScore = 0;
+            gameCompleted[9] = false;
+            renderSlideContent();
+            moveTargetHeart();
+        }
+
+        function catchHeartTap() {
+            catchScore++;
+            if (catchScore >= 17) {
+                gameCompleted[9] = true;
+                triggerConfetti();
+                showToast("Selamat! 17 Hati cinta berhasil ditangkap! 💖");
+                renderSlideContent();
+            } else {
+                const scoreEl = document.getElementById('catch-score-display');
+                if (scoreEl) scoreEl.textContent = catchScore;
+                moveTargetHeart();
+            }
+        }
+
+        function moveTargetHeart() {
+            const heart = document.getElementById('target-heart');
+            if (!heart) return;
+            const top = Math.floor(Math.random() * 70) + 10;
+            const left = Math.floor(Math.random() * 75) + 10;
+            heart.style.top = top + "%";
+            heart.style.left = left + "%";
+        }
+
+        // --- MINI GAME 3: MENYUSUN PUZZLE FOTO (3x3) MENGGUNAKAN 7.jpg ---
+        function initPuzzleGame(forceShuffle = false) {
+            if (forceShuffle || (!puzzleSolved && puzzleMoves === 0 && puzzleOrder.every((v, i) => v === i))) {
+                puzzleOrder = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+                for (let i = puzzleOrder.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [puzzleOrder[i], puzzleOrder[j]] = [puzzleOrder[j], puzzleOrder[i]];
+                }
+                if (puzzleOrder.every((v, i) => v === i)) {
+                    [puzzleOrder[0], puzzleOrder[1]] = [puzzleOrder[1], puzzleOrder[0]];
+                }
+                puzzleSelectedTile = null;
+                puzzleSolved = false;
+                puzzleMoves = 0;
+            }
+        }
+
+        function renderPhotoPuzzleSlide() {
+            initPuzzleGame(false);
+            const currentImg = photoMemories.puzzlePhoto; // Menggunakan 7.jpg
+
+            return `
+                <div class="flex flex-col items-center w-full">
+                    <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full mb-2">🎮 Mini Game 3: Puzzle Kenangan</span>
+                    <h3 class="font-serif-elegant text-xl sm:text-2xl font-bold text-gray-800 mb-1">
+                        ${puzzleSolved ? "Yeay! Puzzle Foto Tersusun! 🧩💖" : "Susun Puzzle Foto Kita!"}
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-3">
+                        ${puzzleSolved ? `Selesai dalam ${puzzleMoves} langkah! Kenangan yang indah banget ✨` : "Ketuk 2 kotak potongan foto untuk menukar posisinya hingga rapi"}
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center gap-2 mb-3">
+                        <span class="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-200">
+                            Langkah: ${puzzleMoves}
+                        </span>
+                        <button type="button" onclick="shufflePuzzle()" class="bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold px-3 py-1 rounded-full transition">
+                            🔀 Acak Ulang
+                        </button>
+                    </div>
+
+                    <!-- Grid Puzzle 3x3 -->
+                    <div class="grid grid-cols-3 gap-1 w-56 h-56 sm:w-60 sm:h-60 bg-pink-200 p-1.5 rounded-2xl shadow-lg border-2 border-pink-300">
+                        ${puzzleOrder.map((pieceIdx, posIdx) => {
+                            const row = Math.floor(pieceIdx / 3);
+                            const col = pieceIdx % 3;
+                            const bgPosX = col * 50;
+                            const bgPosY = row * 50;
+                            const isSelected = puzzleSelectedTile === posIdx;
+
+                            return `
+                                <button type="button" onclick="tapPuzzleTile(${posIdx})"
+                                    class="w-full h-full rounded-lg transition-all duration-200 relative overflow-hidden ${isSelected ? 'ring-4 ring-yellow-400 scale-95 z-10' : 'hover:opacity-95'}"
+                                    style="background-image: url('${currentImg}'); background-size: 300% 300%; background-position: ${bgPosX}% ${bgPosY}%;">
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function tapPuzzleTile(posIdx) {
+            if (puzzleSolved) return;
+
+            if (puzzleSelectedTile === null) {
+                puzzleSelectedTile = posIdx;
+                renderSlideContent();
+            } else if (puzzleSelectedTile === posIdx) {
+                puzzleSelectedTile = null;
+                renderSlideContent();
+            } else {
+                const temp = puzzleOrder[puzzleSelectedTile];
+                puzzleOrder[puzzleSelectedTile] = puzzleOrder[posIdx];
+                puzzleOrder[posIdx] = temp;
+                puzzleSelectedTile = null;
+                puzzleMoves++;
+
+                if (puzzleOrder.every((val, idx) => val === idx)) {
+                    puzzleSolved = true;
+                    gameCompleted[10] = true;
+                    triggerConfetti();
+                    showToast("Hebat! Puzzle foto berhasil disusun! 🧩🎉");
+                }
+                renderSlideContent();
+            }
+        }
+
+        function shufflePuzzle() {
+            puzzleSolved = false;
+            puzzleMoves = 0;
+            gameCompleted[10] = false;
+            initPuzzleGame(true);
+            renderSlideContent();
+        }
+
+        // --- MINI GAME 4: KOTAK HADIAH MISTERI ---
+        const giftRewards = [
+            "🤗 Voucher Peluk & Tiyum Buat Kamu!",
+            "🤗 Voucher Peluk & Tiyum Buat Kamu!",
+            "🤗 Voucher Peluk & Tiyum Buat Kamu!"
+        ];
+
+        function renderGiftBoxSlide() {
+            return `
+                <div class="w-full max-w-md flex flex-col items-center">
+                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full mb-2">🎮 Mini Game 4: Kado Misteri</span>
+                    <h3 class="font-serif-elegant text-xl sm:text-2xl font-bold text-gray-800 mb-1">Pilih 1 Kado Spesialmu!</h3>
+                    <p class="text-xs text-gray-500 mb-5">${selectedGift !== null ? "Kado sudah dipilih dan dikunci! 💕" : "Ketuk salah satu kotak kado di bawah ini untuk membuka hadiahnya"}</p>
+                    <div class="grid grid-cols-3 gap-3 w-full mb-4">
+                        ${[0, 1, 2].map(i => `
+                            <button type="button" ${selectedGift !== null ? 'disabled' : `onclick="openGiftBox(${i})"`} class="p-4 rounded-2xl border-2 transition flex flex-col items-center justify-center ${selectedGift === i ? 'bg-pink-100 border-pink-500 scale-105 shadow-md' : selectedGift !== null ? 'bg-gray-100 border-gray-200 opacity-60 cursor-not-allowed' : 'bg-white hover:bg-pink-50 border-pink-200 cursor-pointer'}">
+                                <span class="text-4xl mb-1">${selectedGift === i ? '🎊' : selectedGift !== null ? '📦' : '🎁'}</span>
+                                <span class="text-xs font-bold text-pink-600">Kado ${i + 1}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                    ${selectedGift !== null ? `
+                        <div class="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-4 rounded-2xl shadow-md text-sm font-bold animate-bounce">
+                            ${giftRewards[selectedGift]}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function openGiftBox(idx) {
+            if (selectedGift !== null) return;
+            selectedGift = idx;
+            gameCompleted[16] = true;
+            triggerConfetti();
+            showToast("Hadiah terkunci! Peluk & tiyum tersimpan! 🫂💖");
+            renderSlideContent();
+        }
+
+        // --- MINI GAME 5: TIUP LILIN KUE ULANG TAHUN ---
+        function renderCakeSlide() {
+            return `
+                <div class="flex flex-col items-center">
+                    <span class="bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full mb-2">🎮 Mini Game 5: Make a Wish</span>
+                    <h3 class="font-serif-elegant text-2xl font-bold text-gray-800 mb-1">
+                        ${candlesBlown ? "Yeay! Lilin Berhasil Ditiup! 🎉" : "Pejamkan Mata & Tiup Lilinnya!"}
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-4">
+                        ${candlesBlown ? "Silakan lanjut ke slide perayaan terakhir! ✨" : "Ucapkan harapanmu dalam hati, lalu tekan tombol tiup lilin di bawah"}
+                    </p>
+
+                    <!-- Ilustrasi Kue Ulang Tahun Mewah 3 Tingkat -->
+                    <div class="relative flex flex-col items-center my-3">
+                        <!-- Lilin & Api -->
+                        <div class="flex gap-4 mb-1">
+                            ${[1, 2, 3].map(() => `
+                                <div class="flex flex-col items-center">
+                                    ${!candlesBlown ? '<div class="w-3 h-5 bg-gradient-to-t from-orange-400 to-yellow-300 rounded-full flame mb-0.5 shadow-md"></div>' : '<div class="w-2 h-2 bg-gray-400 rounded-full mb-1"></div>'}
+                                    <div class="w-2 h-8 bg-gradient-to-r from-pink-300 to-rose-300 rounded-sm shadow"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <!-- Toping / Krim Atas -->
+                        <div class="w-32 h-4 bg-pink-300 rounded-t-full shadow-inner z-10"></div>
+                        <!-- Tingkat 3 (Paling Atas) -->
+                        <div class="w-36 h-10 bg-gradient-to-r from-rose-200 via-pink-200 to-rose-200 rounded-lg shadow-md border-b-2 border-pink-300 flex items-center justify-center">
+                            <span class="text-[10px] font-bold text-pink-600 tracking-wider">SWEET 17</span>
+                        </div>
+                        <!-- Tingkat 2 (Tengah) -->
+                        <div class="w-48 h-12 bg-gradient-to-r from-purple-200 via-pink-200 to-purple-200 rounded-lg shadow-md border-b-2 border-pink-300 flex items-center justify-around px-2">
+                            <span class="text-xs">🍓</span>
+                            <span class="text-xs">✨</span>
+                            <span class="text-xs">🎂</span>
+                            <span class="text-xs">✨</span>
+                            <span class="text-xs">🍓</span>
+                        </div>
+                        <!-- Tingkat 1 (Paling Bawah) -->
+                        <div class="w-60 h-14 bg-gradient-to-r from-pink-300 via-rose-300 to-pink-300 rounded-xl shadow-lg border-b-4 border-pink-400 flex items-center justify-around px-3">
+                            <span class="text-sm">💖</span>
+                            <span class="text-sm">🌸</span>
+                            <span class="text-sm">💖</span>
+                            <span class="text-sm">🌸</span>
+                            <span class="text-sm">💖</span>
+                        </div>
+                        <!-- Piring Kue -->
+                        <div class="w-68 h-3 bg-gray-200 rounded-full shadow-inner mt-1"></div>
+                    </div>
+
+                    <button type="button" onclick="blowCandles()" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-6 py-2.5 rounded-full shadow-md hover:scale-105 transition text-sm">
+                        ${candlesBlown ? "🔥 Nyalakan Lilin Lagi" : "🌬️ Tiup Lilin Sekarang!"}
+                    </button>
+                </div>
+            `;
+        }
+
+        function blowCandles() {
+            candlesBlown = !candlesBlown;
+            if (candlesBlown) {
+                gameCompleted[28] = true;
+                triggerConfetti();
+                showToast("Happy 17th Birthday Sayang! Make a wish! 🎂✨");
+            } else {
+                gameCompleted[28] = false;
+            }
+            renderSlideContent();
+        }
+
+        // ==========================================
+        // 5. MUSIK OTOMATIS YOUTUBE & EFEK EMOJI HATI MELAYANG
+        // ==========================================
+        function startAutoMusic() {
+            try {
+                const player = document.getElementById('youtube-player');
+                if (player) {
+                    player.src = "https://www.youtube.com/embed/CgjknaWVChY?autoplay=1&loop=1&playlist=CgjknaWVChY";
+                }
+                showToast("🎵 Musik latar belakang diputar otomatis!");
+            } catch (err) {
+                console.log("Audio YouTube error", err);
+            }
+        }
+
+        function triggerConfetti() {
+            try {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 80,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ec4899', '#f43f5e', '#a855f7', '#fbbf24']
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-box');
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 2600);
+        }
+
+        function createFloatingHearts() {
+            const container = document.getElementById('floating-hearts');
+            if (!container) return;
+            const heartEmojis = ['💖', '💕', '💗', '💓', '❤️', '💞', '💘', '💝'];
+            const totalHearts = 28;
+
+            for (let i = 0; i < totalHearts; i++) {
+                const el = document.createElement('div');
+                el.textContent = heartEmojis[i % heartEmojis.length];
+                el.className = 'floating-heart-bg';
+                el.style.left = `${Math.random() * 96}%`;
+                el.style.fontSize = `${Math.floor(Math.random() * 18) + 16}px`;
+                const duration = (Math.random() * 8) + 8; // 8 - 16 detik
+                const delay = -(Math.random() * 15); // Langsung tersebar saat dibuka
+                el.style.animationDuration = `${duration}s`;
+                el.style.animationDelay = `${delay}s`;
+                container.appendChild(el);
+            }
+        }
+
+        // ==========================================
+        // 6. LOGIKA LAYAR KUNCI PIN (261109)
+        // ==========================================
+        function updatePinDots() {
+            const dots = document.querySelectorAll('.pin-dot');
+            dots.forEach((dot, idx) => {
+                if (idx < enteredPin.length) {
+                    dot.classList.remove('bg-transparent');
+                    dot.classList.add('bg-pink-500', 'scale-110');
+                } else {
+                    dot.classList.remove('bg-pink-500', 'scale-110');
+                    dot.classList.add('bg-transparent');
+                }
+            });
+        }
+
+        function enterPinDigit(digit) {
+            if (isUnlocked || enteredPin.length >= 6) return;
+            const errEl = document.getElementById('pin-error-msg');
+            if (errEl) errEl.textContent = "";
+
+            enteredPin += String(digit);
+            updatePinDots();
+
+            if (enteredPin.length === 6) {
+                setTimeout(checkPin, 150);
+            }
+        }
+
+        function deletePinDigit() {
+            if (isUnlocked || enteredPin.length === 0) return;
+            enteredPin = enteredPin.slice(0, -1);
+            updatePinDots();
+        }
+
+        function clearPin() {
+            if (isUnlocked) return;
+            enteredPin = "";
+            const errEl = document.getElementById('pin-error-msg');
+            if (errEl) errEl.textContent = "";
+            updatePinDots();
+        }
+
+        function checkPin() {
+            if (enteredPin === SECRET_PIN) {
+                isUnlocked = true;
+                const lockScreen = document.getElementById('pin-lock-screen');
+                if (lockScreen) {
+                    lockScreen.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => {
+                        lockScreen.style.display = 'none';
+                    }, 500);
+                }
+                currentSlide = 0;
+                renderSlideContent();
+                startAutoMusic();
+                triggerConfetti();
+                showToast("PIN Benar! Selamat Ulang Tahun ke-17 Sayang! 💖🎂");
+            } else {
+                const errEl = document.getElementById('pin-error-msg');
+                const cardEl = document.getElementById('pin-card');
+                if (errEl) errEl.textContent = "PIN salah! Coba ingat tanggal spesial kita 💕";
+                if (cardEl) {
+                    cardEl.classList.remove('animate-shake');
+                    void cardEl.offsetWidth;
+                    cardEl.classList.add('animate-shake');
+                }
+                setTimeout(() => {
+                    enteredPin = "";
+                    updatePinDots();
+                }, 400);
+            }
+        }
+
+        // Dukungan Ketik Keyboard untuk PIN & Navigasi Slide
+        document.addEventListener('keydown', (e) => {
+            if (!isUnlocked) {
+                if (e.key >= '0' && e.key <= '9') {
+                    enterPinDigit(e.key);
+                } else if (e.key === 'Backspace') {
+                    deletePinDigit();
+                } else if (e.key === 'Escape') {
+                    clearPin();
+                }
+            } else {
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') prevSlide();
+            }
+        });
+
+        // Inisialisasi Awal Saat Halaman Dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            createFloatingHearts();
+        });
+    </script>
+</body>
+</html>
